@@ -5,12 +5,29 @@
 body {
     background-color: black;
     color: white;
+    font-family: 'Press Start 2P', cursive;
+    text-transform: uppercase;
 }
+
+h1 {
+    font-family: 'Kolker Brush', cursive;
+    font-size: 7rem;
+    margin: 0;
+    padding: 0;
+    text-transform: none;
+}
+
+button {
+    font-family: 'Press Start 2P', cursive;
+    text-transform: uppercase;
+}
+
 #container {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+
 #score, #highScore {
     text-align: left;
 }
@@ -18,10 +35,24 @@ body {
 #grid {
     display: flex;
     flex-wrap: wrap;
-    width: 700px;
+    width: 510px;
 }
+
 #grid div {
     border: solid 1px white;
+    margin-top: 0;
     height: 30px;
     width: 30px;
+}
+
+#playerInfo {
+    padding: 1rem;
+}
+
+#play {
+    height:75px;
+    width: 75px;
+    background-color: green;
+    text-transform: uppercase;
+    color: white;
 }
