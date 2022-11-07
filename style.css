@@ -28,19 +28,15 @@ button {
     align-items: center;
 }
 
-#score, #highScore {
+#gameInfo {
     text-align: left;
+    margin: 0;
 }
 
-#grid {
-    display: flex;
-    flex-wrap: wrap;
-    width: 510px;
-}
 
-#grid div {
+td {
     border: solid 1px white;
-    margin-top: 0;
+    margin: 0;
     height: 30px;
     width: 30px;
 }
@@ -55,4 +51,15 @@ button {
     background-color: green;
     text-transform: uppercase;
     color: white;
+}
+
+.apple {
+    background-color: red;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+.snake {
+    background-color:lime;
 }
