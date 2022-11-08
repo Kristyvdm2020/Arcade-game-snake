@@ -6,6 +6,9 @@ let playerName = document.querySelector("#name");
 let message = document.querySelector("#message");
 let play = document.querySelector("#play");
 let table = document.querySelector("table");
+let score = document.querySelector("#score");
+let highScore = document.querySelector("#highScore");
+
 
 function getApple() {
     let appleX = Math.floor(Math.random()*18);
@@ -49,13 +52,26 @@ let gameState = {
     appleCheck: function () { //checking if apple is the same as head
         let arr = this.snake.body;
         let head = arr[arr.length-1];
-        console.log(head);
         if(this.apple[0] === head[0] && this.apple[1] === head[1]) {
-            console.log("Apple eaten");
+            table.children[this.apple[1]].children[this.apple[0]].classList.remove("apple");
+            gameState.score++;
+            this.apple = getApple();
             return true;
         }
-        console.log("no apple here");
         return false;
+    }, 
+    biteCheck: function(){ //checking if the snake bites itself
+        let arr = this.snake.body;
+        let head = arr[arr.length-1];
+        let body = arr.pop(head);
+        for(let i = 0; i < arr.length; i++) {
+            let element = arr[i];
+            if(element[0] === head[0] && element[1] === head[1]) {
+                this.playing = false;
+                return "bite!";
+            }
+        }
+        return "doing great";
     }
 }
 
@@ -121,7 +137,7 @@ play.addEventListener("click", function() {
         table.appendChild(row);
     
     }
-
+    
     gameState.apple = getApple();
     getSnake();
     gameState.playing = true;
@@ -130,7 +146,8 @@ play.addEventListener("click", function() {
     setInterval(function(){
         moveSnake();
         getSnake();
-    }, 1000);
+        score.innerText = "Score " + gameState.score;
+    }, 250);
 
     
 });
