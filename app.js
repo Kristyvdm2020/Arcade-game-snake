@@ -66,6 +66,7 @@ let gameState = {
         let body = arr.pop(head);
         for(let i = 0; i < arr.length; i++) {
             let element = arr[i];
+            console.log(element);
             if(element[0] === head[0] && element[1] === head[1]) {
                 this.playing = false;
                 return "bite!";
@@ -141,6 +142,7 @@ play.addEventListener("click", function() {
     gameState.apple = getApple();
     getSnake();
     gameState.playing = true;
+    gameState.biteCheck;
     
     
     setInterval(function(){
