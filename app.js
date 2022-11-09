@@ -61,18 +61,18 @@ let gameState = {
         return false;
     }, 
     biteCheck: function(){ //checking if the snake bites itself
-        let arr = this.snake.body;
+        let arr = gameState.snake.body;
         let head = arr[arr.length-1];
-        let body = arr.pop(head);
-        for(let i = 0; i < arr.length; i++) {
-            let element = arr[i];
-            console.log(element);
-            if(element[0] === head[0] && element[1] === head[1]) {
+        for (let i = arr.length-2; i > 0; i--) {
+            let coordinates = arr[i];
+            let x = coordinates[0];
+            let y = coordinates[1];
+            if(head[0] === x && head[1] === y) {
                 this.playing = false;
-                return "bite!";
+                return "Bite!";
             }
         }
-        return "doing great";
+        return "keep on moving";
     }
 }
 
@@ -95,16 +95,19 @@ function moveSnake() {
     if (gameState.playing === false) {
         return;
     }
-    let arr = gameState.snake.body;
-    let head = arr[arr.length-1]
-    let newHead = [head[0] + gameState.snake.nextDirection[0], head[1]+gameState.snake.nextDirection[1]];
-    arr.push(newHead);
-    if(gameState.appleCheck() === false) {
-        let tail = arr[0]; 
-        table.children[tail[1]].children[tail[0]].classList.remove("snake");
-        arr.shift();
+    if(gameState.biteCheck() !== "Bite!"){
+        let arr = gameState.snake.body;
+        let head = arr[arr.length-1]
+        let newHead = [head[0] + gameState.snake.nextDirection[0], head[1]+gameState.snake.nextDirection[1]];
+        arr.push(newHead);
+        if(gameState.appleCheck() === false) {
+            let tail = arr[0]; 
+            table.children[tail[1]].children[tail[0]].classList.remove("snake");
+            arr.shift();
+        }
     }
-    return gameState.wallCheck();
+    gameState.wallCheck();
+    return;
 }
 
 
@@ -127,7 +130,8 @@ play.addEventListener("click", function() {
     message.style.display = "none";
     snakeName.style.visibility = "hidden";
     snakeName.style.display = "none";
-    
+    gameState.playing = true;
+
     for (let j = 0; j < 18; j++) {
         let row = document.createElement("tr");
         for (let i = 0; i < 18; i++) {
@@ -141,14 +145,33 @@ play.addEventListener("click", function() {
     
     gameState.apple = getApple();
     getSnake();
-    gameState.playing = true;
-    gameState.biteCheck;
+    gameState.score = 0;
     
     
     setInterval(function(){
-        moveSnake();
-        getSnake();
-        score.innerText = "Score " + gameState.score;
+        if(gameState.playing !== false) {
+            moveSnake();
+            getSnake();
+            score.innerText = "Score " + gameState.score;
+        } else {
+            if(gameState.playing === false) {
+                play.style.visibility = "visible";
+                play.style.display = "initial";
+                message.style.visibility = "visible";
+                message.style.display = "initial";
+                message.innerText = "Play Again, " + input.value + "?";
+                snakeName.style.visibility = "visible";
+                snakeName.style.display = "initial";
+                while (table.hasChildNodes()) {
+                    table.removeChild(table.firstChild);
+                }
+
+                if(gameState.highScore <= gameState.score) {
+                    gameState.highScore = gameState.score;
+                    highScore.innerText = "High Score " + gameState.highScore;
+                }
+            }
+        }
     }, 250);
 
     
