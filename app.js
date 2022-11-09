@@ -73,6 +73,13 @@ let gameState = {
             }
         }
         return "keep on moving";
+    }, 
+    newGame: function() { //resets game for player to keep going
+        this.playing = true;
+        this.apple = 0; 
+        this.snake.body = [ [10, 5], [10, 6], [10, 7], [10, 8] ];
+        this.snake.nextDirection = [1, 0];
+        this.score = 0;
     }
 }
 
@@ -142,42 +149,43 @@ play.addEventListener("click", function() {
         table.appendChild(row);
     
     }
-    
+
+    gameState.newGame();
     gameState.apple = getApple();
     getSnake();
-    gameState.score = 0;
     
     
-    setInterval(function(){
-        if(gameState.playing !== false) {
-            moveSnake();
-            getSnake();
-            score.innerText = "Score " + gameState.score;
-        } else {
-            if(gameState.playing === false) {
-                play.style.visibility = "visible";
-                play.style.display = "initial";
-                message.style.visibility = "visible";
-                message.style.display = "initial";
-                message.innerText = "Play Again, " + input.value + "?";
-                snakeName.style.visibility = "visible";
-                snakeName.style.display = "initial";
-                while (table.hasChildNodes()) {
-                    table.removeChild(table.firstChild);
-                }
-
-                if(gameState.highScore <= gameState.score) {
-                    gameState.highScore = gameState.score;
-                    highScore.innerText = "High Score " + gameState.highScore;
-                }
-            }
-        }
-    }, 250);
 
     
 });
 
-//Here is where we need to find the event listener for this
+setInterval(function(){
+    if(gameState.playing !== false) {
+        moveSnake();
+        getSnake();
+        score.innerText = "Score " + gameState.score;
+    } 
+}, 1000);
+
+// if(gameState.playing === false) {
+//     play.style.visibility = "visible";
+//     play.style.display = "initial";
+//     message.style.visibility = "visible";
+//     message.style.display = "initial";
+//     message.innerText = "Play Again, " + input.value + "?";
+//     snakeName.style.visibility = "visible";
+//     snakeName.style.display = "initial";
+//     while (table.hasChildNodes()) {
+//         table.removeChild(table.firstChild);
+//     }
+
+//     if(gameState.highScore <= gameState.score) {
+//         gameState.highScore = gameState.score;
+//         highScore.innerText = "High Score " + gameState.highScore;
+//     }
+// }
+
+//Event listener for the arrow keys to move the snake
 document.addEventListener("keydown", function(ev) {
     let pressedKey = ev.code;
     if(pressedKey === "ArrowUp") {
