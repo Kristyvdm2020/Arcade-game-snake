@@ -11,8 +11,29 @@ let highScore = document.querySelector("#highScore");
 
 
 function getApple() {
-    let appleX = Math.floor(Math.random()*18);
-    let appleY = Math.floor(Math.random()*18);
+    let bodyArr = gameState.snake.body;
+    let match = true; 
+    let appleX = 0;
+    let appleY = 0;
+    //checking new apple position against snake body to ensure
+    //no duplicate location of snake and apple
+    do{
+        appleX = Math.floor(Math.random()*18);
+        appleY = Math.floor(Math.random()*18);
+        let count = 0;
+        for (let i = 0; i < bodyArr.length; i++) {
+            let coordinates = bodyArr[i];
+            let x = coordinates[0];
+            let y = coordinates[1];
+            if(appleX === x && appleY === y) {
+                count++;
+                continue;
+            }
+        } 
+        if(count === 0) {
+            match = false;
+        }
+    } while (match === true);
     //here is where we color the apple
     let row = table.children[appleY];
     let cell = row.children[appleX];
@@ -32,6 +53,7 @@ let gameState = {
     snake: snake, // from above
     score: 0, 
     highScore: 0,
+    gameNumber: 0, 
     wallCheck: function() { //checking if collision with wall has happened
         let arr = gameState.snake.body;
         for (let i = 0; i < arr.length; i++) {
@@ -40,10 +62,12 @@ let gameState = {
             let y = coordinates[1];
             if(x > 17 || y > 17) {
                 this.playing = false;
+                this.playAgain();
                 return "Wall!";
             } 
             if(x < 0 || y  < 0) {
                 this.playing = false;
+                this.playAgain();
                 return "Wall!";
             } 
         }
@@ -69,6 +93,7 @@ let gameState = {
             let y = coordinates[1];
             if(head[0] === x && head[1] === y) {
                 this.playing = false;
+                this.playAgain();
                 return "Bite!";
             }
         }
@@ -80,6 +105,26 @@ let gameState = {
         this.snake.body = [ [10, 5], [10, 6], [10, 7], [10, 8] ];
         this.snake.nextDirection = [1, 0];
         this.score = 0;
+    },
+    playAgain: function() { //sets up page to ask for new game
+        if(this.playing === false && this.gameNumber > 0) {
+            play.style.visibility = "visible";
+            play.style.display = "initial";
+            message.style.visibility = "visible";
+            message.style.display = "initial";
+            message.innerText = "Play Again, " + input.value + "?";
+            snakeName.style.visibility = "visible";
+            snakeName.style.display = "initial";
+            //deleting table
+            while (table.hasChildNodes()) {
+                table.removeChild(table.firstChild);
+            }
+            if(gameState.highScore <= gameState.score) {
+                gameState.highScore = gameState.score;
+                highScore.innerText = "High Score " + gameState.highScore;
+            }
+        }
+
     }
 }
 
@@ -143,7 +188,6 @@ play.addEventListener("click", function() {
         let row = document.createElement("tr");
         for (let i = 0; i < 18; i++) {
             let td = document.createElement("td");
-            td.id = i + "-" + j;
             row.appendChild(td);
         }
         table.appendChild(row);
@@ -151,11 +195,10 @@ play.addEventListener("click", function() {
     }
 
     gameState.newGame();
+    score.innerText = "Score " + gameState.score;
+    gameState.gameNumber++;
     gameState.apple = getApple();
     getSnake();
-    
-    
-
     
 });
 
@@ -165,25 +208,8 @@ setInterval(function(){
         getSnake();
         score.innerText = "Score " + gameState.score;
     } 
-}, 1000);
+}, 1000);//DON'T FORGET TO CHANGE THIS BEFORE PUBLISHING!!!!!
 
-// if(gameState.playing === false) {
-//     play.style.visibility = "visible";
-//     play.style.display = "initial";
-//     message.style.visibility = "visible";
-//     message.style.display = "initial";
-//     message.innerText = "Play Again, " + input.value + "?";
-//     snakeName.style.visibility = "visible";
-//     snakeName.style.display = "initial";
-//     while (table.hasChildNodes()) {
-//         table.removeChild(table.firstChild);
-//     }
-
-//     if(gameState.highScore <= gameState.score) {
-//         gameState.highScore = gameState.score;
-//         highScore.innerText = "High Score " + gameState.highScore;
-//     }
-// }
 
 //Event listener for the arrow keys to move the snake
 document.addEventListener("keydown", function(ev) {
