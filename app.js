@@ -208,7 +208,7 @@ setInterval(function(){
         getSnake();
         score.innerText = "Score " + gameState.score;
     } 
-}, 1000);//DON'T FORGET TO CHANGE THIS BEFORE PUBLISHING!!!!!
+}, 250);//DON'T FORGET TO CHANGE THIS BEFORE PUBLISHING!!!!!
 
 
 //Event listener for the arrow keys to move the snake
