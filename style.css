@@ -33,14 +33,6 @@ button {
     margin: 0;
 }
 
-
-td {
-    border: solid 1px white;
-    margin: 0;
-    height: 30px;
-    width: 30px;
-}
-
 #playerInfo {
     padding: 1rem;
 }
@@ -51,10 +43,45 @@ td {
     background-color: green;
     text-transform: uppercase;
     color: white;
+    visibility: hidden;
+    display: none;
 }
 
-.apple {
+li {
+    font-size: 1rem;
+    padding: 1rem;
+}
+
+td {
+    border: solid 1px white;
+    margin: 0;
+    height: 30px;
+    width: 30px;
+}
+
+.redApple {
     background-color: red;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+.blueApple {
+    background-color: 4D4DFF;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+.greenApple {
+    background-color: 39FF14;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+.goldApple {
+    background-color: gold;
     height: 30px;
     width: 30px;
     border-radius: 50%;

@@ -5,11 +5,12 @@ let playerInfo = document.querySelector("#playerInfo");
 let playerName = document.querySelector("#name");
 let message = document.querySelector("#message");
 let play = document.querySelector("#play");
+let rules = document.querySelector("#rules");
 let table = document.querySelector("table");
 let score = document.querySelector("#score");
 let highScore = document.querySelector("#highScore");
 
-
+//function to produce the apple
 function getApple() {
     let bodyArr = gameState.snake.body;
     let match = true; 
@@ -37,7 +38,11 @@ function getApple() {
     //here is where we color the apple
     let row = table.children[appleY];
     let cell = row.children[appleX];
-    cell.classList.add("apple");
+    let colorArr = gameState.appleColor;
+    let pickAColor = Math.floor(Math.random()*colorArr.length);
+    let color = colorArr[pickAColor]; 
+    gameState.currentApple = color;
+    cell.classList.add(color + "apple");
     let arr = [appleX, appleY];
     return arr;
 }
@@ -50,6 +55,8 @@ let snake = {
 let gameState = {
     playing: false,
     apple: 0,
+    appleColor: ["red", "blue", "green", "gold"],
+    currentApple: "red",
     snake: snake, // from above
     score: 0, 
     highScore: 0,
@@ -77,8 +84,20 @@ let gameState = {
         let arr = this.snake.body;
         let head = arr[arr.length-1];
         if(this.apple[0] === head[0] && this.apple[1] === head[1]) {
-            table.children[this.apple[1]].children[this.apple[0]].classList.remove("apple");
-            gameState.score++;
+            let color = this.currentApple;
+            table.children[this.apple[1]].children[this.apple[0]].classList.remove(color + "apple");
+            if(color = "red") {
+                gameState.score++;
+            }
+            // if(color = "blue") {
+            //     gameState.score+=2;
+            // }
+            // if(color = "green") {
+            //     gameState.score-=3;
+            // }
+            // if(color = "gold") {
+            //     gameState.score+=10;
+            // }
             this.apple = getApple();
             return true;
         }
@@ -115,6 +134,8 @@ let gameState = {
             message.innerText = "Play Again, " + input.value + "?";
             snakeName.style.visibility = "visible";
             snakeName.style.display = "initial";
+            rules.style.visibility = "visible";
+            rules.style.display = "initial";
             //deleting table
             while (table.hasChildNodes()) {
                 table.removeChild(table.firstChild);
@@ -171,6 +192,8 @@ nameButton.addEventListener("click", function(){
     input.style.display = "none";
     nameButton.style.visibility = "hidden";
     nameButton.style.display = "none";
+    play.style.visibility = "visible";
+    play.style.display = "initial";
 });
 
 
@@ -182,6 +205,8 @@ play.addEventListener("click", function() {
     message.style.display = "none";
     snakeName.style.visibility = "hidden";
     snakeName.style.display = "none";
+    rules.style.visibility = "hidden";
+    rules.style.display = "none";
     gameState.playing = true;
 
     for (let j = 0; j < 18; j++) {
