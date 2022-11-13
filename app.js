@@ -58,6 +58,7 @@ let gameState = {
     appleColor: ["red", "blue", "green", "gold"],
     currentApple: "red",
     snake: snake, // from above
+    speed: 250, 
     score: 0, 
     highScore: 0,
     gameNumber: 0, 
@@ -86,18 +87,22 @@ let gameState = {
         if(this.apple[0] === head[0] && this.apple[1] === head[1]) {
             let color = this.currentApple;
             table.children[this.apple[1]].children[this.apple[0]].classList.remove(color + "apple");
-            if(color = "red") {
+            if(color === "red") {
                 gameState.score++;
+                gameState.speed = 250;
             }
-            // if(color = "blue") {
-            //     gameState.score+=2;
-            // }
-            // if(color = "green") {
-            //     gameState.score-=3;
-            // }
-            // if(color = "gold") {
-            //     gameState.score+=10;
-            // }
+            if(color === "blue") {
+                gameState.score++;
+                gameState.speed = 500;
+            }
+            if(color === "green") {
+                gameState.score++;
+                gameState.speed = 250;
+            }
+            if(color === "gold") {
+                gameState.score++;
+                gameState.speed = 150;
+            }
             this.apple = getApple();
             return true;
         }
@@ -227,14 +232,30 @@ play.addEventListener("click", function() {
     
 });
 
-setInterval(function(){
-    if(gameState.playing !== false) {
+//setInterval declarations that change speed based on the color apple eaten
+let normalInt = setInterval(function(){  //normal speed 
+    if(gameState.playing !== false && gameState.speed === 250) {
         moveSnake();
         getSnake();
         score.innerText = "Score " + gameState.score;
     } 
-}, 250);//DON'T FORGET TO CHANGE THIS BEFORE PUBLISHING!!!!!
+}, 250);
 
+let blueInt = setInterval(function(){ //slows down due to eating blue apple
+    if(gameState.playing !== false && gameState.speed === 500) {
+        moveSnake();
+        getSnake();
+        score.innerText = "Score " + gameState.score;
+    } 
+}, 500);
+
+let goldInt = setInterval(function(){ //speeds up due to eating gold apple
+    if(gameState.playing !== false && gameState.speed === 150) {
+        moveSnake();
+        getSnake();
+        score.innerText = "Score " + gameState.score;
+    } 
+}, 150);
 
 //Event listener for the arrow keys to move the snake
 document.addEventListener("keydown", function(ev) {
