@@ -1,3 +1,4 @@
+//interacting with the DOM
 let snakeName = document.querySelector("h1");
 let input = document.querySelector("input");
 let nameButton = document.querySelector("#submit");
@@ -10,54 +11,88 @@ let table = document.querySelector("table");
 let score = document.querySelector("#score");
 let highScore = document.querySelector("#highScore");
 
-//function to produce the apple
-function getApple() {
+//function to produce the apples
+function getApple(str) {
     let bodyArr = gameState.snake.body;
     let match = true; 
     let appleX = 0;
     let appleY = 0;
+    let color = "";
     //checking new apple position against snake body to ensure
     //no duplicate location of snake and apple
-    do{
-        appleX = Math.floor(Math.random()*18);
-        appleY = Math.floor(Math.random()*18);
-        let count = 0;
-        for (let i = 0; i < bodyArr.length; i++) {
-            let coordinates = bodyArr[i];
-            let x = coordinates[0];
-            let y = coordinates[1];
-            if(appleX === x && appleY === y) {
+    if(str === "red") {
+        do{
+            appleX = Math.floor(Math.random()*18);
+            appleY = Math.floor(Math.random()*18);
+            let count = 0;
+            for (let i = 0; i < bodyArr.length; i++) {
+                let coordinates = bodyArr[i];
+                let x = coordinates[0];
+                let y = coordinates[1];
+                if(appleX === x && appleY === y) {
+                    count++;
+                    continue;
+                }
+            } 
+            if(count === 0) {
+                match = false;
+            }
+        } while (match === true);
+        color = "red";
+    } else {
+        let firstApple = gameState.firstApple;
+        let firstX = firstApple[0];
+        let firstY = firstApple[1];
+        do{
+            appleX = Math.floor(Math.random()*18);
+            appleY = Math.floor(Math.random()*18);
+            let count = 0;
+            for (let i = 0; i < bodyArr.length; i++) {
+                let coordinates = bodyArr[i];
+                let x = coordinates[0];
+                let y = coordinates[1];
+                if(appleX === x && appleY === y) {
+                    count++;
+                    continue;
+                }
+            } 
+            if(appleX === firstX && appleY === firstY) {
                 count++;
                 continue;
             }
-        } 
-        if(count === 0) {
-            match = false;
-        }
-    } while (match === true);
+            if(count === 0) {
+                match = false;
+            }
+        } while (match === true);
+        //picking other apple color
+        let colorArr = gameState.appleColor;
+        let pickAColor = Math.floor(Math.random()*colorArr.length);
+        color = colorArr[pickAColor]; 
+        gameState.currentRandApple = color;
+    }
+    
     //here is where we color the apple
     let row = table.children[appleY];
     let cell = row.children[appleX];
-    let colorArr = gameState.appleColor;
-    let pickAColor = Math.floor(Math.random()*colorArr.length);
-    let color = colorArr[pickAColor]; 
-    gameState.currentApple = color;
     cell.classList.add(color + "apple");
     let arr = [appleX, appleY];
     return arr;
 }
 
+//snake body and direction object
 let snake = {
     body: [ [10, 5], [10, 6], [10, 7], [10, 8] ],
     nextDirection: [1, 0],
     switchControls: false
 }
 
+//game state object and functions
 let gameState = {
     playing: false,
-    apple: 0,
-    appleColor: ["red", "blue", "green", "gold"],
-    currentApple: "red",
+    firstApple: 0,
+    secondApple: 0,
+    appleColor: ["blue", "green", "gold"],
+    currentRandApple: "blue",
     snake: snake, // from above
     speed: 250, 
     score: 0, 
@@ -85,14 +120,20 @@ let gameState = {
     appleCheck: function () { //checking if apple is the same as head
         let arr = this.snake.body;
         let head = arr[arr.length-1];
-        if(this.apple[0] === head[0] && this.apple[1] === head[1]) {
-            let color = this.currentApple;
-            table.children[this.apple[1]].children[this.apple[0]].classList.remove(color + "apple");
+        if(this.firstApple[0] === head[0] && this.firstApple[1] === head[1]) {//red apples
+            let color = "red";
+            table.children[this.firstApple[1]].children[this.firstApple[0]].classList.remove(color + "apple");
             if(color === "red") {
                 gameState.score++;
                 gameState.speed = 250;
                 snake.switchControls = false;
+                this.firstApple = getApple("red");
             }
+            return true;
+        }
+        if (this.secondApple[0] === head[0] && this.secondApple[1] === head[1]) {//random apples
+            let color = this.currentRandApple;
+            table.children[this.secondApple[1]].children[this.secondApple[0]].classList.remove(color + "apple");
             if(color === "blue") {
                 gameState.score++;
                 gameState.speed = 500;
@@ -107,10 +148,10 @@ let gameState = {
                 gameState.speed = 150;
                 snake.switchControls = false;
             }
-            this.apple = getApple();
+            this.secondApple = getApple("rand");
             return true;
         }
-        return false;
+        return false;  
     }, 
     biteCheck: function(){ //checking if the snake bites itself
         let arr = gameState.snake.body;
@@ -127,9 +168,10 @@ let gameState = {
         }
         return "keep on moving";
     }, 
-    newGame: function() { //resets game for player to keep going
+    newGame: function() { //resets game for player
         this.playing = true;
-        this.apple = 0; 
+        this.firstApple = 0; 
+        this.secondApple = 0;
         this.snake.body = [ [10, 5], [10, 6], [10, 7], [10, 8] ];
         this.snake.nextDirection = [1, 0];
         this.snake.switchControls = false;
@@ -194,7 +236,6 @@ function moveSnake() {
     return;
 }
 
-
 //Displays Player Name at the Top
 nameButton.addEventListener("click", function(){
     playerName.innerText = input.value;
@@ -232,10 +273,12 @@ play.addEventListener("click", function() {
     gameState.newGame();
     score.innerText = "Score " + gameState.score;
     gameState.gameNumber++;
-    gameState.apple = getApple();
+    gameState.firstApple = getApple("red");
+    gameState.secondApple = getApple("rand");
     getSnake();
     
 });
+
 
 //setInterval declarations that change speed based on the color apple eaten
 let normalInt = setInterval(function(){  //normal speed 
@@ -261,6 +304,7 @@ let goldInt = setInterval(function(){ //speeds up due to eating gold apple
         score.innerText = "Score " + gameState.score;
     } 
 }, 150);
+
 
 //Event listener for the arrow keys to move the snake
 document.addEventListener("keydown", function(ev) {
