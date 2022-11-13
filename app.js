@@ -49,7 +49,8 @@ function getApple() {
 
 let snake = {
     body: [ [10, 5], [10, 6], [10, 7], [10, 8] ],
-    nextDirection: [1, 0]
+    nextDirection: [1, 0],
+    switchControls: false
 }
 
 let gameState = {
@@ -90,18 +91,21 @@ let gameState = {
             if(color === "red") {
                 gameState.score++;
                 gameState.speed = 250;
+                snake.switchControls = false;
             }
             if(color === "blue") {
                 gameState.score++;
                 gameState.speed = 500;
+                snake.switchControls = false;
             }
             if(color === "green") {
                 gameState.score++;
-                gameState.speed = 250;
+                snake.switchControls = true;
             }
             if(color === "gold") {
                 gameState.score++;
                 gameState.speed = 150;
+                snake.switchControls = false;
             }
             this.apple = getApple();
             return true;
@@ -128,6 +132,8 @@ let gameState = {
         this.apple = 0; 
         this.snake.body = [ [10, 5], [10, 6], [10, 7], [10, 8] ];
         this.snake.nextDirection = [1, 0];
+        this.snake.switchControls = false;
+        this.speed = 250;
         this.score = 0;
     },
     playAgain: function() { //sets up page to ask for new game
@@ -221,7 +227,6 @@ play.addEventListener("click", function() {
             row.appendChild(td);
         }
         table.appendChild(row);
-    
     }
 
     gameState.newGame();
@@ -261,15 +266,31 @@ let goldInt = setInterval(function(){ //speeds up due to eating gold apple
 document.addEventListener("keydown", function(ev) {
     let pressedKey = ev.code;
     if(pressedKey === "ArrowUp") {
-        gameState.snake.nextDirection = [0, -1];
-    } 
+        if(snake.switchControls !== true) { //green apple switches controls
+            gameState.snake.nextDirection = [0, -1];  
+        } else {
+            gameState.snake.nextDirection = [0, 1];
+        }
+    }
     if (pressedKey === "ArrowDown") {
-        gameState.snake.nextDirection = [0, 1];
+        if(snake.switchControls !== true) { //green apple switches controls
+            gameState.snake.nextDirection = [0, 1];  
+        } else {
+            gameState.snake.nextDirection = [0, -1];
+        }
     }
     if (pressedKey === "ArrowRight") {
-        gameState.snake.nextDirection = [1, 0];
+        if(snake.switchControls !== true) { //green apple switches controls
+            gameState.snake.nextDirection = [1, 0];  
+        } else {
+            gameState.snake.nextDirection = [-1, 0];
+        }
     }
     if (pressedKey === "ArrowLeft") {
-        gameState.snake.nextDirection = [-1, 0];
+        if(snake.switchControls !== true) { //green apple switches controls
+            gameState.snake.nextDirection = [-1, 0];  
+        } else {
+            gameState.snake.nextDirection = [1, 0];
+        }
     }
 });
